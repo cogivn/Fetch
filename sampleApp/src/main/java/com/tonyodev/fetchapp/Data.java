@@ -16,6 +16,7 @@ import java.util.List;
 public final class Data {
 
     public static final String[] sampleUrls = new String[]{
+            "http://dummy.restapiexample.com/api/v1/create",
             "http://speedtest.ftp.otenet.gr/files/test100Mb.db",
             "https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_stereo.avi",
             "http://media.mongodb.org/zips.json",

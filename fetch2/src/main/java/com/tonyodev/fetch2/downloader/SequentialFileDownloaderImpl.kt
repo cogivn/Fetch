@@ -49,12 +49,12 @@ class SequentialFileDownloaderImpl(private val initialDownload: Download,
     private val downloadInfo by lazy { initialDownload.toDownloadInfo(delegate!!.getNewDownloadInfoInstance()) }
     private var averageDownloadedBytesPerSecond = 0.0
     private val movingAverageCalculator = AverageCalculator(5)
-    private val downloadBlock = {
+    private val downloadBlock = run {
         val downloadBlock = DownloadBlockInfo()
         downloadBlock.blockPosition = 1
         downloadBlock.downloadId = initialDownload.id
         downloadBlock
-    }()
+    }
     private val totalDownloadBlocks = 1
 
     override val download: Download

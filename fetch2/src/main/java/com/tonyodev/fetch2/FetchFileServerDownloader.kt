@@ -1,5 +1,6 @@
 package com.tonyodev.fetch2
 
+import com.google.gson.JsonParser
 import com.tonyodev.fetch2core.*
 
 import com.tonyodev.fetch2core.server.FileRequest.CREATOR.TYPE_FILE
@@ -77,10 +78,14 @@ open class FetchFileServerDownloader @JvmOverloads constructor(
                 val contentLength = serverResponse.contentLength
                 val inputStream = transporter.getInputStream()
                 val errorResponse = if (!isSuccessful) {
-                    copyStreamToString(inputStream, false)
-                } else {
-                    null
-                }
+                    try {
+                        val json = copyStreamToString(inputStream, false)
+                        JsonParser.parseString(json)
+                    } catch (ex: Exception) {
+                        null
+                    }
+                } else null
+
                 val responseHeaders = mutableMapOf<String, List<String>>()
                 try {
                     val json = JSONObject(serverResponse.toJsonString)

@@ -5,6 +5,8 @@ package com.tonyodev.fetch2core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import java.io.*
 import java.math.BigInteger
 import java.net.CookieManager

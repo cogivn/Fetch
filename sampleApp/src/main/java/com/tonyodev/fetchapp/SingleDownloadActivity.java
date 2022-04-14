@@ -193,7 +193,16 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
     }
 
     private void showDownloadErrorSnackBar(@NotNull Error error) {
-        final Snackbar snackbar = Snackbar.make(mainView, "Download Failed: ErrorCode: " + error, Snackbar.LENGTH_INDEFINITE);
+        Timber.d("Error = %s", error.getHttpResponse().toString());
+        String message = error.getHttpResponse()
+                .getErrorResponse()
+                .getAsJsonObject()
+                .get("message")
+                .getAsString();
+        final Snackbar snackbar = Snackbar.make(mainView,
+                "Download Failed: ErrorCode: " + message,
+                Snackbar.LENGTH_INDEFINITE);
+
         snackbar.setAction(R.string.retry, v -> {
             fetch.retry(request.getId());
             snackbar.dismiss();

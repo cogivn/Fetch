@@ -1,12 +1,13 @@
 package com.tonyodev.fetch2
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import com.tonyodev.fetch2core.*
 import java.io.InputStream
 import java.net.CookieHandler
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.Collections
-import kotlin.collections.HashMap
+import java.util.*
 
 /**
  * The default Downloader used by Fetch for downloading requests.
@@ -14,25 +15,30 @@ import kotlin.collections.HashMap
  * @see {@link com.tonyodev.fetch2core.Downloader}
  * */
 open class HttpUrlConnectionDownloader @JvmOverloads constructor(
-        /**
-         * HttpUrlConnectionPreferences to set preference settings for the
-         * HttpUrlConnectionDownloader HttpUrlConnection client.
-         * @see com.tonyodev.fetch2.HttpUrlConnectionDownloader.HttpUrlConnectionPreferences
-         * */
-        httpUrlConnectionPreferences: HttpUrlConnectionPreferences? = null,
-        /** The file downloader type used to download a request.
-         * The SEQUENTIAL type downloads bytes in sequence.
-         * The PARALLEL type downloads bytes in parallel.
-         * */
-        private val fileDownloaderType: Downloader.FileDownloaderType = Downloader.FileDownloaderType.SEQUENTIAL) : Downloader<HttpURLConnection, Void> {
+    /**
+     * HttpUrlConnectionPreferences to set preference settings for the
+     * HttpUrlConnectionDownloader HttpUrlConnection client.
+     * @see com.tonyodev.fetch2.HttpUrlConnectionDownloader.HttpUrlConnectionPreferences
+     * */
+    httpUrlConnectionPreferences: HttpUrlConnectionPreferences? = null,
+    /** The file downloader type used to download a request.
+     * The SEQUENTIAL type downloads bytes in sequence.
+     * The PARALLEL type downloads bytes in parallel.
+     * */
+    private val fileDownloaderType: Downloader.FileDownloaderType = Downloader.FileDownloaderType.SEQUENTIAL
+) : Downloader<HttpURLConnection, Void> {
 
     constructor(fileDownloaderType: Downloader.FileDownloaderType) : this(null, fileDownloaderType)
 
     protected val connectionPrefs = httpUrlConnectionPreferences ?: HttpUrlConnectionPreferences()
-    protected val connections: MutableMap<Downloader.Response, HttpURLConnection> = Collections.synchronizedMap(HashMap<Downloader.Response, HttpURLConnection>())
+    protected val connections: MutableMap<Downloader.Response, HttpURLConnection> =
+        Collections.synchronizedMap(HashMap<Downloader.Response, HttpURLConnection>())
     protected val cookieManager = getDefaultCookieManager()
 
-    override fun onPreClientExecute(client: HttpURLConnection, request: Downloader.ServerRequest): Void? {
+    override fun onPreClientExecute(
+        client: HttpURLConnection,
+        request: Downloader.ServerRequest
+    ): Void? {
         client.requestMethod = request.requestMethod
         client.readTimeout = connectionPrefs.readTimeout
         client.connectTimeout = connectionPrefs.connectTimeout
@@ -57,7 +63,10 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         return headers
     }
 
-    override fun execute(request: Downloader.ServerRequest, interruptMonitor: InterruptMonitor): Downloader.Response? {
+    override fun execute(
+        request: Downloader.ServerRequest,
+        interruptMonitor: InterruptMonitor
+    ): Downloader.Response? {
         CookieHandler.setDefault(cookieManager)
         var httpUrl = URL(request.url)
         var client = httpUrl.openConnection() as HttpURLConnection
@@ -70,8 +79,12 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         var responseHeaders = getCleanedHeaders(client.headerFields)
         var code = client.responseCode
         if ((code == HttpURLConnection.HTTP_MOVED_TEMP
-                        || code == HttpURLConnection.HTTP_MOVED_PERM
-                        || code == HttpURLConnection.HTTP_SEE_OTHER) && getHeaderValue(responseHeaders, "Location") != null) {
+                    || code == HttpURLConnection.HTTP_MOVED_PERM
+                    || code == HttpURLConnection.HTTP_SEE_OTHER) && getHeaderValue(
+                responseHeaders,
+                "Location"
+            ) != null
+        ) {
             try {
                 client.disconnect()
             } catch (e: Exception) {
@@ -90,7 +103,7 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         var success = false
         var contentLength = -1L
         var byteStream: InputStream? = null
-        var errorResponseString: String? = null
+        var errorResponse: JsonElement? = null
         var hash = ""
         if (isResponseOk(code)) {
             success = true
@@ -98,12 +111,18 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
             byteStream = client.inputStream
             hash = getContentHash(responseHeaders)
         } else {
-            errorResponseString = copyStreamToString(client.errorStream, false)
+            errorResponse = try {
+                val json = copyStreamToString(byteStream, false)
+                JsonParser.parseString(json)
+            } catch (ex: Exception) {
+                null
+            }
         }
 
         val acceptsRanges = acceptRanges(code, responseHeaders)
 
-        onServerResponse(request, Downloader.Response(
+        onServerResponse(
+            request, Downloader.Response(
                 code = code,
                 isSuccessful = success,
                 contentLength = contentLength,
@@ -112,18 +131,21 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
                 hash = hash,
                 responseHeaders = client.headerFields,
                 acceptsRanges = acceptsRanges,
-                errorResponse = errorResponseString))
+                errorResponse = errorResponse
+            )
+        )
 
         val response = Downloader.Response(
-                code = code,
-                isSuccessful = success,
-                contentLength = contentLength,
-                byteStream = byteStream,
-                request = request,
-                hash = hash,
-                responseHeaders = responseHeaders,
-                acceptsRanges = acceptsRanges,
-                errorResponse = errorResponseString)
+            code = code,
+            isSuccessful = success,
+            contentLength = contentLength,
+            byteStream = byteStream,
+            request = request,
+            hash = hash,
+            responseHeaders = responseHeaders,
+            acceptsRanges = acceptsRanges,
+            errorResponse = errorResponse
+        )
 
         connections[response] = client
         return response
@@ -164,7 +186,10 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         return null
     }
 
-    override fun getRequestFileDownloaderType(request: Downloader.ServerRequest, supportedFileDownloaderTypes: Set<Downloader.FileDownloaderType>): Downloader.FileDownloaderType {
+    override fun getRequestFileDownloaderType(
+        request: Downloader.ServerRequest,
+        supportedFileDownloaderTypes: Set<Downloader.FileDownloaderType>
+    ): Downloader.FileDownloaderType {
         return fileDownloaderType
     }
 
@@ -176,7 +201,10 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
         return fileHash?.contentEquals(hash) ?: true
     }
 
-    override fun onServerResponse(request: Downloader.ServerRequest, response: Downloader.Response) {
+    override fun onServerResponse(
+        request: Downloader.ServerRequest,
+        response: Downloader.Response
+    ) {
 
     }
 

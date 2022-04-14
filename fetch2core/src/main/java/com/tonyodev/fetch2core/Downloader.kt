@@ -1,6 +1,7 @@
 package com.tonyodev.fetch2core
 
 import android.net.Uri
+import com.google.gson.JsonElement
 import java.io.Closeable
 import java.io.InputStream
 
@@ -212,7 +213,7 @@ interface Downloader<T, R> : Closeable {
             val acceptsRanges: Boolean,
 
             /** Error Response string. May be null*/
-            val errorResponse: String?)
+            val errorResponse: JsonElement?)
 
     /** File Downloading Type used to download each request.*/
     enum class FileDownloaderType {
