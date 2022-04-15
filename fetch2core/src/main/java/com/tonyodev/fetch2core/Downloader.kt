@@ -197,18 +197,23 @@ interface Downloader<T, R> : Closeable {
             /** The content length of a download.*/
             val contentLength: Long,
 
+            @Transient
             /** The input stream used to perform the download.*/
             val byteStream: InputStream?,
 
+            @Transient
             /** The request that initiated this response.*/
             val request: ServerRequest,
 
+            @Transient
             /** The file hash value to verify against.*/
             val hash: String,
 
+            @Transient
             /** Server Response Headers */
             val responseHeaders: Map<String, List<String>>,
 
+            @Transient
             /** Details if the server accepts byte ranges*/
             val acceptsRanges: Boolean,
 

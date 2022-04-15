@@ -7,6 +7,8 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Status
 import com.tonyodev.fetch2core.Extras
+import com.tonyodev.fetch2core.JsonGenerator
+import com.tonyodev.fetch2core.toJson
 import org.json.JSONObject
 
 class Converter {
@@ -55,13 +57,20 @@ class Converter {
     }
 
     @TypeConverter
-    fun fromErrorValue(value: Int): Error {
-        return Error.valueOf(value)
+    fun fromErrorValue(value: String): Error {
+        val entity: ErrorEntity? = JsonGenerator.parser(value)
+        val key = entity?.key ?: Error.UNKNOWN.value
+        return Error.valueOf(key).apply {
+            httpResponse = entity?.response
+        }
     }
 
     @TypeConverter
-    fun toErrorValue(error: Error): Int {
-        return error.value
+    fun toErrorValue(error: Error): String {
+        return ErrorEntity(
+            key = error.value,
+            response = error.httpResponse
+        ).toJson()
     }
 
     @TypeConverter

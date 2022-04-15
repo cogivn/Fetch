@@ -57,7 +57,7 @@ open class DownloadInfo : Download {
     @ColumnInfo(name = DownloadDatabase.COLUMN_STATUS, typeAffinity = ColumnInfo.INTEGER)
     override var status: Status = defaultStatus
 
-    @ColumnInfo(name = DownloadDatabase.COLUMN_ERROR, typeAffinity = ColumnInfo.INTEGER)
+    @ColumnInfo(name = DownloadDatabase.COLUMN_ERROR, typeAffinity = ColumnInfo.TEXT)
     override var error: Error = defaultNoError
 
     @ColumnInfo(name = DownloadDatabase.COLUMN_NETWORK_TYPE, typeAffinity = ColumnInfo.INTEGER)

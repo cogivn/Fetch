@@ -17,8 +17,7 @@ enum class Error constructor(
          * */
         var throwable: Throwable? = null,
 
-        /** The http response containing the reason the error may have occured. It will only be present
-         * at the time the error occurs and will not be saved in the Fetch database.
+        /** The http response containing the reason the error may have occured.
          * This httpResponse may be null.*/
         var httpResponse: Downloader.Response? = null) {
 

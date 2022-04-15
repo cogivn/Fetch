@@ -112,7 +112,7 @@ open class HttpUrlConnectionDownloader @JvmOverloads constructor(
             hash = getContentHash(responseHeaders)
         } else {
             errorResponse = try {
-                val json = copyStreamToString(byteStream, false)
+                val json = copyStreamToString(client.errorStream, false)
                 JsonParser.parseString(json)
             } catch (ex: Exception) {
                 null

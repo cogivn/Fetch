@@ -13,11 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.JsonElement;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
 import com.tonyodev.fetch2.Request;
 import com.tonyodev.fetch2.Status;
+import com.tonyodev.fetch2core.Downloader;
 import com.tonyodev.fetch2core.Extras;
 import com.tonyodev.fetch2core.FetchObserver;
 import com.tonyodev.fetch2core.MutableExtras;
@@ -193,21 +195,22 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
     }
 
     private void showDownloadErrorSnackBar(@NotNull Error error) {
-        Timber.d("Error = %s", error.getHttpResponse().toString());
-        String message = error.getHttpResponse()
-                .getErrorResponse()
-                .getAsJsonObject()
-                .get("message")
-                .getAsString();
-        final Snackbar snackbar = Snackbar.make(mainView,
-                "Download Failed: ErrorCode: " + message,
-                Snackbar.LENGTH_INDEFINITE);
+        Downloader.Response response = error.getHttpResponse();
+        if (response != null) {
+            JsonElement element = response.getErrorResponse();
+            if (element != null) {
+                String message = element.getAsJsonObject().get("message").getAsString();
+                final Snackbar snackbar = Snackbar.make(mainView,
+                        "Download Failed: ErrorCode: " + message,
+                        Snackbar.LENGTH_INDEFINITE);
 
-        snackbar.setAction(R.string.retry, v -> {
-            fetch.retry(request.getId());
-            snackbar.dismiss();
-        });
-        snackbar.show();
+                snackbar.setAction(R.string.retry, v -> {
+                    fetch.retry(request.getId());
+                    snackbar.dismiss();
+                });
+                snackbar.show();
+            }
+        }
     }
 
 }
