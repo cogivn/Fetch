@@ -1,25 +1,27 @@
 package com.tonyodev.fetch2
 
 import com.tonyodev.fetch2core.Downloader
+import com.tonyodev.fetch2core.toJson
 
 /**
  * Enumeration which contains specific errors that can occur.
  * */
 enum class Error constructor(
-        /** Error Value*/
-        val value: Int,
-        /** A throwable will only be present at the time the error
-         * occurs and will not be saved in the Fetch database. This means that if a download encounters
-         * an error, the throwable will be attached to the error and the error will be attached to the
-         * download and this information will be sent to all attached FetchListeners.
-         * Fetch will not save the throwable in the database for later use.
-         * Only the error enum type and value field of the error will be saved. This throwable field may be null.
-         * */
-        var throwable: Throwable? = null,
+    /** Error Value*/
+    val value: Int,
+    /** A throwable will only be present at the time the error
+     * occurs and will not be saved in the Fetch database. This means that if a download encounters
+     * an error, the throwable will be attached to the error and the error will be attached to the
+     * download and this information will be sent to all attached FetchListeners.
+     * Fetch will not save the throwable in the database for later use.
+     * Only the error enum type and value field of the error will be saved. This throwable field may be null.
+     * */
+    var throwable: Throwable? = null,
 
-        /** The http response containing the reason the error may have occured.
-         * This httpResponse may be null.*/
-        var httpResponse: Downloader.Response? = null) {
+    /** The http response containing the reason the error may have occured.
+     * This httpResponse may be null.*/
+    var httpResponse: Downloader.Response? = null
+) {
 
     /** Indicates that the specific issue or error is not known.*/
     UNKNOWN(-1),
@@ -175,6 +177,10 @@ enum class Error constructor(
             }
         }
 
+    }
+
+    override fun toString(): String {
+        return this.toJson()
     }
 
 }
