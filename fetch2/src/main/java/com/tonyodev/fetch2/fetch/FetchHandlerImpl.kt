@@ -360,6 +360,10 @@ class FetchHandlerImpl(
         return deleteDownloads(fetchDatabaseManagerWrapper.get(), softDelete)
     }
 
+    override fun deleteAll() {
+        fetchDatabaseManagerWrapper.deleteAll()
+    }
+
     override fun deleteAllWithStatus(status: Status, softDelete: Boolean): List<Download> {
         return deleteDownloads(fetchDatabaseManagerWrapper.getByStatus(status), softDelete)
     }
