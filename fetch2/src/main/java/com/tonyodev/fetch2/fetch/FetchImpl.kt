@@ -523,79 +523,115 @@ open class FetchImpl constructor(
         }
     }
 
-    override fun delete(ids: List<Int>, func: Func<List<Download>>?, func2: Func<Error>?): Fetch {
-        return executeDeleteAction({ fetchHandler.delete(ids) }, func, func2)
+    override fun delete(
+        ids: List<Int>,
+        softDelete: Boolean,
+        func: Func<List<Download>>?,
+        func2: Func<Error>?
+    ): Fetch {
+        return executeDeleteAction({ fetchHandler.delete(ids, softDelete) }, func, func2)
     }
 
     override fun deleteByIdentifiers(
         identifiers: List<Long>,
+        softDelete: Boolean,
         func: Func<List<Download>>?,
         func2: Func<Error>?
     ) = executeDeleteAction(
-        { fetchHandler.deleteByIdentifier(identifiers) }, func, func2
+        { fetchHandler.deleteByIdentifier(identifiers, softDelete) }, func, func2
     )
 
-    override fun delete(id: Int, func: Func<Download>?, func2: Func<Error>?): Fetch {
-        return delete(listOf(id), Func { downloads ->
+    override fun delete(
+        id: Int,
+        softDelete: Boolean,
+        func: Func<Download>?,
+        func2: Func<Error>?
+    ): Fetch {
+        return delete(listOf(id), func = { downloads ->
             if (downloads.isNotEmpty()) {
                 func?.call(downloads.first())
             } else {
                 func2?.call(Error.REQUEST_DOES_NOT_EXIST)
             }
-        }, func2)
+        }, func2 = func2)
     }
 
-    override fun deleteGroup(id: Int, func: Func<List<Download>>?, func2: Func<Error>?): Fetch {
-        return executeDeleteAction({ fetchHandler.deleteGroup(id) }, func, func2)
-    }
-
-    override fun delete(ids: List<Int>): Fetch {
-        return delete(ids, null, null)
-    }
-
-    override fun delete(id: Int): Fetch {
-        return delete(id, null, null)
-    }
-
-    override fun deleteGroup(id: Int): Fetch {
-        return deleteGroup(id, null, null)
-    }
-
-    override fun deleteAll(func: Func<List<Download>>?, func2: Func<Error>?): Fetch {
-        return executeDeleteAction({ fetchHandler.deleteAll() }, func, func2)
-    }
-
-    override fun deleteAll(): Fetch {
-        return deleteAll(null, null)
-    }
-
-    override fun deleteAllWithStatus(
-        status: Status,
-        func: Func<List<Download>>?,
-        func2: Func<Error>?
-    ): Fetch {
-        return executeDeleteAction({ fetchHandler.deleteAllWithStatus(status) }, func, func2)
-    }
-
-    override fun deleteAllWithStatus(status: Status): Fetch {
-        return deleteAllWithStatus(status, null, null)
-    }
-
-    override fun deleteAllInGroupWithStatus(
+    override fun deleteGroup(
         id: Int,
-        statuses: List<Status>,
+        softDelete: Boolean,
         func: Func<List<Download>>?,
         func2: Func<Error>?
     ): Fetch {
         return executeDeleteAction(
-            { fetchHandler.deleteAllInGroupWithStatus(id, statuses) },
+            { fetchHandler.deleteGroup(id, softDelete) },
             func,
             func2
         )
     }
 
-    override fun deleteAllInGroupWithStatus(id: Int, statuses: List<Status>): Fetch {
-        return deleteAllInGroupWithStatus(id, statuses, null, null)
+    override fun delete(ids: List<Int>, softDelete: Boolean): Fetch {
+        return delete(ids, softDelete, func = null, func2 = null)
+    }
+
+    override fun delete(id: Int, softDelete: Boolean): Fetch {
+        return delete(id, func = null, func2 = null)
+    }
+
+    override fun deleteGroup(id: Int, softDelete: Boolean): Fetch {
+        return deleteGroup(id, softDelete, null, null)
+    }
+
+    override fun deleteAll(
+        softDelete: Boolean,
+        func: Func<List<Download>>?,
+        func2: Func<Error>?
+    ): Fetch {
+        return executeDeleteAction({ fetchHandler.deleteAll(softDelete) }, func, func2)
+    }
+
+    override fun deleteAll(softDelete: Boolean): Fetch {
+        return deleteAll(softDelete, null, null)
+    }
+
+    override fun deleteAllWithStatus(
+        status: Status,
+        softDelete: Boolean,
+        func: Func<List<Download>>?,
+        func2: Func<Error>?
+    ): Fetch {
+        return executeDeleteAction(
+            { fetchHandler.deleteAllWithStatus(status, softDelete) },
+            func,
+            func2
+        )
+    }
+
+    override fun deleteAllWithStatus(status: Status, softDelete: Boolean): Fetch {
+        return deleteAllWithStatus(status, softDelete, null, null)
+    }
+
+    override fun deleteAllInGroupWithStatus(
+        id: Int,
+        statuses: List<Status>,
+        softDelete: Boolean,
+        func: Func<List<Download>>?,
+        func2: Func<Error>?
+    ): Fetch {
+        return executeDeleteAction(
+            { fetchHandler.deleteAllInGroupWithStatus(id, statuses, softDelete) },
+            func,
+            func2
+        )
+    }
+
+    override fun deleteAllInGroupWithStatus(
+        id: Int,
+        statuses: List<Status>,
+        softDelete: Boolean
+    ): Fetch {
+        return deleteAllInGroupWithStatus(
+            id, statuses, softDelete, null, null
+        )
     }
 
     private fun executeDeleteAction(
@@ -630,22 +666,27 @@ open class FetchImpl constructor(
         }
     }
 
-    override fun cancel(ids: List<Int>, func: Func<List<Download>>?, func2: Func<Error>?): Fetch {
+    override fun cancel(
+        ids: List<Int>,
+        softDelete: Boolean,
+        func: Func<List<Download>>?,
+        func2: Func<Error>?
+    ): Fetch {
         return executeCancelAction({ fetchHandler.cancel(ids) }, func, func2)
     }
 
     override fun cancel(ids: List<Int>): Fetch {
-        return cancel(ids, null, null)
+        return cancel(ids, func = null, func2 = null)
     }
 
     override fun cancel(id: Int, func: Func<Download>?, func2: Func<Error>?): Fetch {
-        return cancel(listOf(id), Func { downloads ->
+        return cancel(listOf(id), func = Func { downloads ->
             if (downloads.isNotEmpty()) {
                 func?.call(downloads.first())
             } else {
                 func2?.call(Error.REQUEST_DOES_NOT_EXIST)
             }
-        }, func2)
+        }, func2 = func2)
     }
 
     override fun cancel(id: Int): Fetch {

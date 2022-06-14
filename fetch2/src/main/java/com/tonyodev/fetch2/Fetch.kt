@@ -395,6 +395,7 @@ interface Fetch {
      * */
     fun delete(
         ids: List<Int>,
+        softDelete: Boolean = true,
         func: Func<List<Download>>? = null,
         func2: Func<Error>? = null
     ): Fetch
@@ -406,7 +407,7 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun delete(ids: List<Int>): Fetch
+    fun delete(ids: List<Int>, softDelete: Boolean = true): Fetch
 
     /**
      * Delete a list of downloads managed by this instance of Fetch.
@@ -419,6 +420,7 @@ interface Fetch {
      * */
     fun deleteByIdentifiers(
         identifiers: List<Long>,
+        softDelete: Boolean = true,
         func: Func<List<Download>>? = null,
         func2: Func<Error>? = null
     ): Fetch
@@ -432,7 +434,12 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun delete(id: Int, func: Func<Download>? = null, func2: Func<Error>? = null): Fetch
+    fun delete(
+        id: Int,
+        softDelete: Boolean = true,
+        func: Func<Download>? = null,
+        func2: Func<Error>? = null
+    ): Fetch
 
     /**
      * Delete a download managed by this instance of Fetch.
@@ -441,7 +448,7 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun delete(id: Int): Fetch
+    fun delete(id: Int, softDelete: Boolean = true): Fetch
 
     /**
      * Deletes all downloads in the specified group managed by this instance of Fetch.
@@ -452,7 +459,12 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteGroup(id: Int, func: Func<List<Download>>? = null, func2: Func<Error>? = null): Fetch
+    fun deleteGroup(
+        id: Int,
+        softDelete: Boolean = true,
+        func: Func<List<Download>>? = null,
+        func2: Func<Error>? = null
+    ): Fetch
 
     /**
      * Deletes all downloads in the specified group managed by this instance of Fetch.
@@ -461,7 +473,7 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteGroup(id: Int): Fetch
+    fun deleteGroup(id: Int, softDelete: Boolean = true): Fetch
 
     /**
      * Deletes all downloads managed by this instance of Fetch.
@@ -470,7 +482,11 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteAll(func: Func<List<Download>>? = null, func2: Func<Error>? = null): Fetch
+    fun deleteAll(
+        softDelete: Boolean = true,
+        func: Func<List<Download>>? = null,
+        func2: Func<Error>? = null
+    ): Fetch
 
     /**
      * Deletes all downloads managed by this instance of Fetch.
@@ -478,7 +494,7 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteAll(): Fetch
+    fun deleteAll(softDelete: Boolean = true): Fetch
 
     /**
      * Deletes all downloads with the specified status in this instance of Fetch.
@@ -491,6 +507,7 @@ interface Fetch {
      * */
     fun deleteAllWithStatus(
         status: Status,
+        softDelete: Boolean = true,
         func: Func<List<Download>>? = null,
         func2: Func<Error>? = null
     ): Fetch
@@ -502,7 +519,7 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteAllWithStatus(status: Status): Fetch
+    fun deleteAllWithStatus(status: Status, softDelete: Boolean = true): Fetch
 
     /**
      * Deletes all downloads with the specified group and status in this instance of Fetch.
@@ -516,6 +533,7 @@ interface Fetch {
     fun deleteAllInGroupWithStatus(
         id: Int,
         statuses: List<Status>,
+        softDelete: Boolean = true,
         func: Func<List<Download>>?,
         func2: Func<Error>? = null
     ): Fetch
@@ -527,7 +545,11 @@ interface Fetch {
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun deleteAllInGroupWithStatus(id: Int, statuses: List<Status>): Fetch
+    fun deleteAllInGroupWithStatus(
+        id: Int,
+        statuses: List<Status>,
+        softDelete: Boolean = true
+    ): Fetch
 
     /**
      * Cancel a list of non completed downloads managed by this instance of Fetch.
@@ -540,6 +562,7 @@ interface Fetch {
      * */
     fun cancel(
         ids: List<Int>,
+        softDelete: Boolean = true,
         func: Func<List<Download>>? = null,
         func2: Func<Error>? = null
     ): Fetch

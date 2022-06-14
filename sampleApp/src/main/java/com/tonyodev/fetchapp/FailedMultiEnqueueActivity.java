@@ -27,8 +27,7 @@ public class FailedMultiEnqueueActivity extends AppCompatActivity {
         final FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this)
                 .setNamespace(FETCH_NAMESPACE)
                 .build();
-        fetch = Fetch.Impl.getInstance(fetchConfiguration)
-                .deleteAll();
+        fetch = Fetch.Impl.getInstance(fetchConfiguration).deleteAll(false);
 
         final List<Request> requests = new ArrayList<>();
         final String url = "https://www.notdownloadable.com/test.txt";
@@ -49,5 +48,4 @@ public class FailedMultiEnqueueActivity extends AppCompatActivity {
         super.onDestroy();
         fetch.close();
     }
-
 }

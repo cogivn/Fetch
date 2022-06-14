@@ -63,14 +63,14 @@ class FetchDatabaseManagerImpl constructor(
         }
     }
 
-    override fun delete(downloadInfo: DownloadInfo) {
+    override fun delete(downloadInfo: DownloadInfo, softDelete: Boolean) {
         throwExceptionIfClosed()
         // requestDatabase.requestDao().delete(downloadInfo)
         val download = downloadInfo.apply { status = Status.DELETED }
         requestDatabase.requestDao().update(download)
     }
 
-    override fun delete(downloadInfoList: List<DownloadInfo>) {
+    override fun delete(downloadInfoList: List<DownloadInfo>, softDelete: Boolean) {
         throwExceptionIfClosed()
         // requestDatabase.requestDao().delete(downloadInfoList)
         val downloads = downloadInfoList.map { it.apply { status = Status.DELETED } }

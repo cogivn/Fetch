@@ -150,7 +150,7 @@ class FetchHandlerImpl(
             ) {
                 if (!storageResolver.fileExists(existingDownload.file)) {
                     try {
-                        fetchDatabaseManagerWrapper.delete(existingDownload)
+                        fetchDatabaseManagerWrapper.delete(existingDownload, false)
                     } catch (e: Exception) {
                         logger.e(e.message ?: "", e)
                     }
@@ -201,9 +201,9 @@ class FetchHandlerImpl(
             }
             EnqueueAction.REPLACE_EXISTING -> {
                 if (existingDownload != null) {
-                    deleteDownloads(listOf(existingDownload))
+                    deleteDownloads(listOf(existingDownload), false)
                 }
-                deleteDownloads(listOf(newInfo))
+                deleteDownloads(listOf(newInfo), false)
                 return Pair(false, newInfo)
             }
             EnqueueAction.INCREMENT_FILE_NAME -> {
@@ -237,7 +237,7 @@ class FetchHandlerImpl(
     private fun prepareCompletedDownloadInfoForEnqueue(downloadInfo: DownloadInfo) {
         val existingDownload = fetchDatabaseManagerWrapper.getByFile(downloadInfo.file)
         if (existingDownload != null) {
-            deleteDownloads(listOf(downloadInfo))
+            deleteDownloads(listOf(downloadInfo), false)
         }
     }
 
@@ -332,7 +332,7 @@ class FetchHandlerImpl(
 
     private fun removeDownloads(downloads: List<DownloadInfo>): List<Download> {
         cancelDownloadsIfDownloading(downloads)
-        fetchDatabaseManagerWrapper.delete(downloads)
+        fetchDatabaseManagerWrapper.delete(downloads, true)
         downloads.forEach {
             it.status = Status.REMOVED
             fetchDatabaseManagerWrapper.delegate?.deleteTempFilesForDownload(it)
@@ -340,42 +340,49 @@ class FetchHandlerImpl(
         return downloads
     }
 
-    override fun delete(ids: List<Int>): List<Download> {
-        return deleteDownloads(fetchDatabaseManagerWrapper.get(ids).filterNotNull())
+    override fun delete(ids: List<Int>, softDelete: Boolean): List<Download> {
+        return deleteDownloads(fetchDatabaseManagerWrapper.get(ids).filterNotNull(), softDelete)
     }
 
-    override fun deleteByIdentifier(identifier: List<Long>): List<Download> {
+    override fun deleteByIdentifier(identifier: List<Long>, softDelete: Boolean): List<Download> {
         return deleteDownloads(
             fetchDatabaseManagerWrapper
                 .getDownloadsByIdentifier(identifier)
-                .filterNotNull()
+                .filterNotNull(), softDelete
         )
     }
 
-    override fun deleteGroup(id: Int): List<Download> {
-        return deleteDownloads(fetchDatabaseManagerWrapper.getByGroup(id))
+    override fun deleteGroup(id: Int, softDelete: Boolean): List<Download> {
+        return deleteDownloads(fetchDatabaseManagerWrapper.getByGroup(id), softDelete)
     }
 
-    override fun deleteAll(): List<Download> {
-        return deleteDownloads(fetchDatabaseManagerWrapper.get())
+    override fun deleteAll(softDelete: Boolean): List<Download> {
+        return deleteDownloads(fetchDatabaseManagerWrapper.get(), softDelete)
     }
 
-    override fun deleteAllWithStatus(status: Status): List<Download> {
-        return deleteDownloads(fetchDatabaseManagerWrapper.getByStatus(status))
+    override fun deleteAllWithStatus(status: Status, softDelete: Boolean): List<Download> {
+        return deleteDownloads(fetchDatabaseManagerWrapper.getByStatus(status), softDelete)
     }
 
-    override fun deleteAllInGroupWithStatus(groupId: Int, statuses: List<Status>): List<Download> {
+    override fun deleteAllInGroupWithStatus(
+        groupId: Int,
+        statuses: List<Status>,
+        softDelete: Boolean
+    ): List<Download> {
         return deleteDownloads(
             fetchDatabaseManagerWrapper.getDownloadsInGroupWithStatus(
                 groupId,
                 statuses
-            )
+            ), softDelete
         )
     }
 
-    private fun deleteDownloads(downloads: List<DownloadInfo>): List<Download> {
+    private fun deleteDownloads(
+        downloads: List<DownloadInfo>,
+        softDelete: Boolean
+    ): List<Download> {
         cancelDownloadsIfDownloading(downloads)
-        fetchDatabaseManagerWrapper.delete(downloads)
+        fetchDatabaseManagerWrapper.delete(downloads, softDelete)
         downloads.forEach {
             it.status = Status.DELETED
             storageResolver.deleteFile(it.file)
@@ -460,13 +467,15 @@ class FetchHandlerImpl(
                     newDownloadInfo.status = oldDownloadInfo.status
                     newDownloadInfo.error = oldDownloadInfo.error
                 }
-                fetchDatabaseManagerWrapper.delete(oldDownloadInfo)
+                //soft_delete=false
+                fetchDatabaseManagerWrapper.delete(oldDownloadInfo, false)
                 listenerCoordinator.mainListener.onDeleted(oldDownloadInfo)
                 fetchDatabaseManagerWrapper.insert(newDownloadInfo)
                 startPriorityQueueIfNotStarted()
                 return Pair(newDownloadInfo, true)
             } else {
-                delete(listOf(requestId))
+                //soft_delete=false
+                delete(listOf(requestId), false)
                 val enqueuePair = enqueue(newRequest)
                 Pair(enqueuePair.first, enqueuePair.second == Error.NONE)
             }
@@ -494,10 +503,12 @@ class FetchHandlerImpl(
         }
         val renamed = storageResolver.renameFile(download.file, newFileName)
         return if (!renamed) {
-            fetchDatabaseManagerWrapper.delete(copy)
+            //soft_delete=false
+            fetchDatabaseManagerWrapper.delete(copy, false)
             throw FetchException(FILE_CANNOT_BE_RENAMED)
         } else {
-            fetchDatabaseManagerWrapper.delete(download)
+            //soft_delete=false
+            fetchDatabaseManagerWrapper.delete(download, false)
             pair.first
         }
     }

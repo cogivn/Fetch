@@ -84,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 FileServerActivity.FETCH_NAMESPACE};
         for (String namespace : namespaces) {
             final FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(this).setNamespace(namespace).build();
-            Fetch.Impl.getInstance(fetchConfiguration).deleteAll().close();
+            Fetch.Impl.getInstance(fetchConfiguration).deleteAll(false).close();
         }
-        Fetch.Impl.getDefaultInstance().deleteAll().close();
+        Fetch.Impl.getDefaultInstance().deleteAll(false).close();
         final RxFetch rxFetch = RxFetch.Impl.getDefaultRxInstance();
         rxFetch.deleteAll();
         rxFetch.close();

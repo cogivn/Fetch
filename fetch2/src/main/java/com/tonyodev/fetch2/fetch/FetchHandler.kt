@@ -30,12 +30,17 @@ interface FetchHandler : Closeable {
     fun removeAll(): List<Download>
     fun removeAllWithStatus(status: Status): List<Download>
     fun removeAllInGroupWithStatus(groupId: Int, statuses: List<Status>): List<Download>
-    fun delete(ids: List<Int>): List<Download>
-    fun deleteByIdentifier(identifier: List<Long>): List<Download>
-    fun deleteGroup(id: Int): List<Download>
-    fun deleteAll(): List<Download>
-    fun deleteAllWithStatus(status: Status): List<Download>
-    fun deleteAllInGroupWithStatus(groupId: Int, statuses: List<Status>): List<Download>
+    fun delete(ids: List<Int>, softDelete: Boolean): List<Download>
+    fun deleteByIdentifier(identifier: List<Long>, softDelete: Boolean): List<Download>
+    fun deleteGroup(id: Int, softDelete: Boolean): List<Download>
+    fun deleteAll(softDelete: Boolean): List<Download>
+    fun deleteAllWithStatus(status: Status, softDelete: Boolean): List<Download>
+    fun deleteAllInGroupWithStatus(
+        groupId: Int,
+        statuses: List<Status>,
+        softDelete: Boolean
+    ): List<Download>
+
     fun cancel(ids: List<Int>): List<Download>
     fun cancelGroup(id: Int): List<Download>
     fun cancelAll(): List<Download>
@@ -63,7 +68,7 @@ interface FetchHandler : Closeable {
     fun getFetchFileServerCatalog(request: Request): List<FileResource>
     fun setDownloadConcurrentLimit(downloadConcurrentLimit: Int)
     fun replaceExtras(id: Int, extras: Extras): Download
-    fun deleteExtraByKey(downloadId:Int, key: String): Download
+    fun deleteExtraByKey(downloadId: Int, key: String): Download
     fun deleteExtraByKey(ids: List<Int>, key: String): List<Download>
     fun hasActiveDownloads(includeAddedDownloads: Boolean): Boolean
     fun getListenerSet(): Set<FetchListener>

@@ -118,7 +118,7 @@ public class DatabaseInstrumentedTest {
         final Request request = getTestRequest();
         final DownloadInfo downloadInfo = FetchTypeConverterExtensions.toDownloadInfo(request, new DownloadInfo());
         fetchDatabaseManager.insert(downloadInfo);
-        fetchDatabaseManager.delete(downloadInfo);
+        fetchDatabaseManager.delete(downloadInfo, false);
         final Download query = fetchDatabaseManager.get(downloadInfo.getId());
         assertNull(query);
     }
@@ -140,7 +140,7 @@ public class DatabaseInstrumentedTest {
             downloadInfoList.add(downloadInfo);
         }
         fetchDatabaseManager.insert(downloadInfoList);
-        fetchDatabaseManager.delete(downloadInfoList);
+        fetchDatabaseManager.delete(downloadInfoList, false);
         final List<Integer> ids = new ArrayList<>();
         for (DownloadInfo downloadInfo : downloadInfoList) {
             ids.add(downloadInfo.getId());

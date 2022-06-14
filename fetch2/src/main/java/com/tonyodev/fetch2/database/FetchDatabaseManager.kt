@@ -52,13 +52,13 @@ interface FetchDatabaseManager<T : DownloadInfo> : Closeable {
      * Deletes a download from the database.
      * @param downloadInfo object containing the download information.
      * */
-    fun delete(downloadInfo: T)
+    fun delete(downloadInfo: T, softDelete: Boolean)
 
     /**
      * Deletes a list of downloads from the database.
      * @param downloadInfoList list of objects containing the download information.
      * */
-    fun delete(downloadInfoList: List<T>)
+    fun delete(downloadInfoList: List<T>, softDelete: Boolean)
 
     /**
      * Deletes all downloads in the database.

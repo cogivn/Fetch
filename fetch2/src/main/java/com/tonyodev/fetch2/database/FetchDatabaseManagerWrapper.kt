@@ -44,15 +44,15 @@ class FetchDatabaseManagerWrapper(private val fetchDatabaseManager: FetchDatabas
         }
     }
 
-    override fun delete(downloadInfo: DownloadInfo) {
+    override fun delete(downloadInfo: DownloadInfo, softDelete: Boolean) {
         synchronized(lock) {
-            fetchDatabaseManager.delete(downloadInfo)
+            fetchDatabaseManager.delete(downloadInfo, softDelete)
         }
     }
 
-    override fun delete(downloadInfoList: List<DownloadInfo>) {
+    override fun delete(downloadInfoList: List<DownloadInfo>, softDelete: Boolean) {
         synchronized(lock) {
-            fetchDatabaseManager.delete(downloadInfoList)
+            fetchDatabaseManager.delete(downloadInfoList, softDelete)
         }
     }
 
