@@ -6,11 +6,13 @@ import androidx.room.TypeConverters
 import com.tonyodev.fetch2.database.DownloadDatabase.Companion.DATABASE_VERSION
 import com.tonyodev.fetch2.database.migration.*
 
-@Database(entities = [
-    DownloadInfo::class,
-    Tag::class,
-    TagRef::class
-], version = DATABASE_VERSION, exportSchema = false)
+@Database(
+    entities = [
+        DownloadInfo::class,
+        Tag::class,
+        TagRef::class
+    ], version = DATABASE_VERSION, exportSchema = false
+)
 @TypeConverters(value = [Converter::class])
 abstract class DownloadDatabase : RoomDatabase() {
 
@@ -54,8 +56,11 @@ abstract class DownloadDatabase : RoomDatabase() {
 
         @JvmStatic
         fun getMigrations(): Array<Migration> {
-            return arrayOf(MigrationOneToTwo(), MigrationTwoToThree(), MigrationThreeToFour(),
-                    MigrationFourToFive(), MigrationFiveToSix(), MigrationSixToSeven())
+            return arrayOf(
+                MigrationOneToTwo(), MigrationTwoToThree(), MigrationThreeToFour(),
+                MigrationFourToFive(), MigrationFiveToSix(), MigrationSixToSeven(),
+                MigrationSevenToEight(), MigrateEightToNine()
+            )
         }
 
     }
