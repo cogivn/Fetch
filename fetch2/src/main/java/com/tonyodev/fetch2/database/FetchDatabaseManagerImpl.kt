@@ -43,6 +43,7 @@ class FetchDatabaseManagerImpl constructor(
     init {
         val builder = Room.databaseBuilder(context, DownloadDatabase::class.java, "$namespace.db")
         builder.addMigrations(*migrations)
+        builder.fallbackToDestructiveMigrationFrom(8, 9)
         requestDatabase = builder.build()
         database = requestDatabase.openHelper.writableDatabase
     }

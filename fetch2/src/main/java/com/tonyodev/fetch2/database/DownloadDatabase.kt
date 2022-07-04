@@ -58,8 +58,7 @@ abstract class DownloadDatabase : RoomDatabase() {
         fun getMigrations(): Array<Migration> {
             return arrayOf(
                 MigrationOneToTwo(), MigrationTwoToThree(), MigrationThreeToFour(),
-                MigrationFourToFive(), MigrationFiveToSix(), MigrationSixToSeven(),
-                MigrationSevenToEight(), MigrateEightToNine()
+                MigrationFourToFive(), MigrationFiveToSix(), MigrationSixToSeven()
             )
         }
 
