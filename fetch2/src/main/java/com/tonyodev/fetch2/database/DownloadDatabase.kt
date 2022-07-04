@@ -50,7 +50,7 @@ abstract class DownloadDatabase : RoomDatabase() {
         const val COLUMN_AUTO_RETRY_ATTEMPTS = "_auto_retry_attempts"
         const val COLUMN_TAG_ID = "_tag_id"
         const val OLD_DATABASE_VERSION = 7
-        const val DATABASE_VERSION = 8
+        const val DATABASE_VERSION = 9
 
         @JvmStatic
         fun getMigrations(): Array<Migration> {
