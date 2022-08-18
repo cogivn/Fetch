@@ -18,6 +18,7 @@ import com.tonyodev.fetch2.util.defaultNoError
 import com.tonyodev.fetch2core.DefaultStorageResolver
 import com.tonyodev.fetch2core.Extras
 import com.tonyodev.fetch2core.Logger
+import kotlin.math.log
 
 
 class FetchDatabaseManagerImpl constructor(
@@ -51,7 +52,9 @@ class FetchDatabaseManagerImpl constructor(
     override fun insert(downloadInfo: DownloadInfo): Pair<DownloadInfo, Boolean> {
         throwExceptionIfClosed()
         val row = requestDatabase.requestDao().insert(downloadInfo)
-        executeInsertOrUpdateTag(downloadInfo)
+        val wasRowInserted = requestDatabase.wasRowInserted(row)
+        if (wasRowInserted) executeInsertOrUpdateTag(downloadInfo)
+        else logger.d("Inserted failed --> insert result = $row, info= $downloadInfo")
         return Pair(downloadInfo, requestDatabase.wasRowInserted(row))
     }
 
@@ -60,7 +63,12 @@ class FetchDatabaseManagerImpl constructor(
         val rowsList = requestDatabase.requestDao().insert(downloadInfoList)
         downloadInfoList.map { executeInsertOrUpdateTag(it) }
         return rowsList.indices.map {
-            Pair(downloadInfoList[it], requestDatabase.wasRowInserted(rowsList[it]))
+            val id = rowsList[it]
+            val info = downloadInfoList[it]
+            val wasRowInserted = requestDatabase.wasRowInserted(id)
+            if (wasRowInserted) executeInsertOrUpdateTag(info)
+            else logger.d("Inserted failed --> insert result = $id, info= $info")
+            Pair(info, wasRowInserted)
         }
     }
 
