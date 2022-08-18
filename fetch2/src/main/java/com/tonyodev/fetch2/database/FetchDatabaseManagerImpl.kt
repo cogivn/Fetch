@@ -53,21 +53,24 @@ class FetchDatabaseManagerImpl constructor(
         throwExceptionIfClosed()
         val row = requestDatabase.requestDao().insert(downloadInfo)
         val wasRowInserted = requestDatabase.wasRowInserted(row)
-        if (wasRowInserted) executeInsertOrUpdateTag(downloadInfo)
-        else logger.d("Inserted failed --> insert result = $row, info= $downloadInfo")
+        if (wasRowInserted) {
+            logger.d("From insert(info/${downloadInfo.id}) function -> Start insert/update tag ref.")
+            executeInsertOrUpdateTag(downloadInfo)
+        } else logger.e("Insert failed --> insert result = $row, info= $downloadInfo")
         return Pair(downloadInfo, requestDatabase.wasRowInserted(row))
     }
 
     override fun insert(downloadInfoList: List<DownloadInfo>): List<Pair<DownloadInfo, Boolean>> {
         throwExceptionIfClosed()
         val rowsList = requestDatabase.requestDao().insert(downloadInfoList)
-        downloadInfoList.map { executeInsertOrUpdateTag(it) }
         return rowsList.indices.map {
             val id = rowsList[it]
             val info = downloadInfoList[it]
             val wasRowInserted = requestDatabase.wasRowInserted(id)
-            if (wasRowInserted) executeInsertOrUpdateTag(info)
-            else logger.d("Inserted failed --> insert result = $id, info= $info")
+            if (wasRowInserted) {
+                logger.d("From insert(info(s)/${info.id}) function -> Start insert/update tag ref.")
+                executeInsertOrUpdateTag(info)
+            } else logger.e("Insert failed --> insert result = $id, info= $info")
             Pair(info, wasRowInserted)
         }
     }
@@ -99,13 +102,17 @@ class FetchDatabaseManagerImpl constructor(
     override fun update(downloadInfo: DownloadInfo) {
         throwExceptionIfClosed()
         requestDatabase.requestDao().update(downloadInfo)
+        logger.d("From update(info/${downloadInfo.id}) function -> Start insert/update tag ref.")
         executeInsertOrUpdateTag(downloadInfo)
     }
 
     override fun update(downloadInfoList: List<DownloadInfo>) {
         throwExceptionIfClosed()
         requestDatabase.requestDao().update(downloadInfoList)
-        downloadInfoList.map { executeInsertOrUpdateTag(it) }
+        downloadInfoList.map {
+            logger.d("From update(info(s)/${it.id}) function -> Start insert/update tag ref.")
+            executeInsertOrUpdateTag(it)
+        }
     }
 
     override fun updateFileBytesInfoAndStatusOnly(downloadInfo: DownloadInfo) {
