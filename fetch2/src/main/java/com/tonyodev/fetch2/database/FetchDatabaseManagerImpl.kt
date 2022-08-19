@@ -18,7 +18,6 @@ import com.tonyodev.fetch2.util.defaultNoError
 import com.tonyodev.fetch2core.DefaultStorageResolver
 import com.tonyodev.fetch2core.Extras
 import com.tonyodev.fetch2core.Logger
-import kotlin.math.log
 
 
 class FetchDatabaseManagerImpl constructor(
@@ -101,17 +100,23 @@ class FetchDatabaseManagerImpl constructor(
 
     override fun update(downloadInfo: DownloadInfo) {
         throwExceptionIfClosed()
-        requestDatabase.requestDao().update(downloadInfo)
-        logger.d("From update(info/${downloadInfo.id}) function -> Start insert/update tag ref.")
-        executeInsertOrUpdateTag(downloadInfo)
+        val wasRowExisted = requestDatabase.requestDao().isRowIsExist(downloadInfo.id)
+        if (wasRowExisted) {
+            requestDatabase.requestDao().update(downloadInfo)
+            logger.d("From update(info/${downloadInfo.id}) function -> Start insert/update tag ref.")
+            executeInsertOrUpdateTag(downloadInfo)
+        } else logger.d("From update(info) --> result = Update failed with ${downloadInfo.id}")
     }
 
     override fun update(downloadInfoList: List<DownloadInfo>) {
         throwExceptionIfClosed()
         requestDatabase.requestDao().update(downloadInfoList)
         downloadInfoList.map {
-            logger.d("From update(info(s)/${it.id}) function -> Start insert/update tag ref.")
-            executeInsertOrUpdateTag(it)
+            val wasRowExisted = requestDatabase.requestDao().isRowIsExist(it.id)
+            if (wasRowExisted) {
+                logger.d("From update(info(s)/${it.id}) function -> Start insert/update tag ref.")
+                executeInsertOrUpdateTag(it)
+            } else logger.d("From update(info(s)) --> result = Update failed with ${it.id}")
         }
     }
 

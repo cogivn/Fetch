@@ -86,4 +86,7 @@ interface DownloadDao {
     @Query("SELECT DISTINCT $COLUMN_GROUP from $TABLE_NAME")
     fun getAllGroupIds(): List<Int>
 
+    @Query("SELECT EXISTS(SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id)")
+    fun isRowIsExist(id : Int) : Boolean
+
 }
