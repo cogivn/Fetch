@@ -993,6 +993,7 @@ open class FetchImpl constructor(
     ): Fetch {
         return synchronized(lock) {
             throwExceptionIfClosed()
+            if (ids.isEmpty()) return this
             handlerWrapper.post {
                 try {
                     val downloads = fetchHandler.deleteExtraByKey(ids, key)
