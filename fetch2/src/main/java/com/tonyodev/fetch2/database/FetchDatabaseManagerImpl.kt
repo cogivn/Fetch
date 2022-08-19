@@ -54,7 +54,7 @@ class FetchDatabaseManagerImpl constructor(
         val row = requestDatabase.requestDao().insert(downloadInfo)
         val wasRowInserted = requestDatabase.wasRowInserted(row)
         if (wasRowInserted) {
-            logger.d("From insert(info/${downloadInfo.id}) function -> Start insert/update tag ref.")
+            logger.d("From insert(info/${downloadInfo.id}/$row) function -> Start insert/update tag ref.")
             executeInsertOrUpdateTag(downloadInfo)
         } else logger.e("Insert failed --> insert result = $row, info= $downloadInfo")
         return Pair(downloadInfo, requestDatabase.wasRowInserted(row))
@@ -68,7 +68,7 @@ class FetchDatabaseManagerImpl constructor(
             val info = downloadInfoList[it]
             val wasRowInserted = requestDatabase.wasRowInserted(id)
             if (wasRowInserted) {
-                logger.d("From insert(info(s)/${info.id}) function -> Start insert/update tag ref.")
+                logger.d("From insert(info(s)/${info.id}/$id) function -> Start insert/update tag ref.")
                 executeInsertOrUpdateTag(info)
             } else logger.e("Insert failed --> insert result = $id, info= $info")
             Pair(info, wasRowInserted)
