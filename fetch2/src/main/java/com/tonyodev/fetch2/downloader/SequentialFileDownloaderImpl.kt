@@ -1,5 +1,6 @@
 package com.tonyodev.fetch2.downloader
 
+import com.google.gson.JsonParser
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2.exception.FetchException
 import com.tonyodev.fetch2.helper.FileDownloaderDelegate
@@ -8,6 +9,7 @@ import com.tonyodev.fetch2.util.*
 import com.tonyodev.fetch2core.*
 import java.io.*
 import java.net.HttpURLConnection
+import java.net.ProtocolException
 import kotlin.math.ceil
 
 class SequentialFileDownloaderImpl(private val initialDownload: Download,
@@ -156,6 +158,24 @@ class SequentialFileDownloaderImpl(private val initialDownload: Download,
                 error.throwable = e
                 if (response != null) {
                     error.httpResponse = copyDownloadResponseNoStream(response)
+                } else if (e is ProtocolException) {
+                    val httpCode = "HTTP (\\d+)".toRegex()
+                    val code = httpCode.find(e.message ?: "")?.groups
+                        ?.let { catching { it[1]?.value?.toInt() } } ?: -1
+                    error.httpResponse = Downloader.Response(
+                        code = code,
+                        isSuccessful = false,
+                        contentLength = -1,
+                        byteStream = null,
+                        request = getRequest(),
+                        hash = "",
+                        responseHeaders = mapOf(),
+                        acceptsRanges = false,
+                        errorResponse = catching {
+                            val json = "{\"message\":\"${e.message}\"}"
+                            JsonParser.parseString(json)
+                        }
+                    )
                 }
                 if (retryOnNetworkGain) {
                     var disconnectDetected = !networkInfoProvider.isNetworkAvailable
