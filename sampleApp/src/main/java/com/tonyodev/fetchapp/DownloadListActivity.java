@@ -79,7 +79,9 @@ public class DownloadListActivity extends AppCompatActivity implements ActionLis
     @Override
     protected void onResume() {
         super.onResume();
-        fetch.getDownloadsByTag("bookmark-1", downloads -> {
+        List<String> tags = new ArrayList<>();
+        tags.add("bookmark-1");
+        fetch.getDownloadsByTags(tags, downloads -> {
             final ArrayList<Download> list = new ArrayList<>(downloads);
             Collections.sort(list, Comparator.comparingLong(Download::getCreated));
             for (Download download : list) {

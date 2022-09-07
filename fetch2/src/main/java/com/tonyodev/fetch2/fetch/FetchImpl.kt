@@ -1212,6 +1212,19 @@ open class FetchImpl constructor(
         }
     }
 
+    override fun getDownloadsByTags(tags: List<String>, func: Func<List<Download>>): Fetch {
+        synchronized(lock) {
+            throwExceptionIfClosed()
+            handlerWrapper.post {
+                val downloads = fetchHandler.getDownloadsByTags(tags)
+                uiHandler.post {
+                    func.call(downloads)
+                }
+            }
+            return this
+        }
+    }
+
     override fun addCompletedDownload(
         completedDownload: CompletedDownload,
         alertListeners: Boolean,

@@ -14,6 +14,10 @@ abstract class TagDao {
     @Query("SELECT * FROM $TABLE_TAG_NAME WHERE $COLUMN_TAG_ID=:tagId")
     abstract fun getDownloadsByTag(tagId: Int): TagWithDownloads?
 
+    @Transaction
+    @Query("SELECT * FROM $TABLE_TAG_NAME WHERE $COLUMN_TAG_ID IN (:tagIds)")
+    abstract fun getDownloadsByTags(tagIds: List<Int>):List<TagWithDownloads>
+
     @Insert(onConflict = IGNORE)
     abstract fun addTag(tag: Tag): Long
 

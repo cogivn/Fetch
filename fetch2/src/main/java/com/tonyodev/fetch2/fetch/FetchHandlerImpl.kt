@@ -607,6 +607,10 @@ class FetchHandlerImpl(
         return fetchDatabaseManagerWrapper.getDownloadsByTag(tag)
     }
 
+    override fun getDownloadsByTags(tags: List<String>): List<Download> {
+        return fetchDatabaseManagerWrapper.getDownloadsByTags(tags)
+    }
+
     override fun getDownloadBlocks(id: Int): List<DownloadBlock> {
         val download = fetchDatabaseManagerWrapper.get(id)
         return if (download != null) {

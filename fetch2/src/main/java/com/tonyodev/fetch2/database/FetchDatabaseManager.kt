@@ -163,6 +163,13 @@ interface FetchDatabaseManager<T : DownloadInfo> : Closeable {
     fun getDownloadsByTag(tag: String): List<T>
 
     /**
+     * Get a list of downloads by the specified tag.
+     * @param tags the tags.
+     * @return list of downloads matching the query.
+     * */
+    fun getDownloadsByTags(tags: List<String>): List<T>
+
+    /**
      * Gets a list of the ids of all groups managed my this fetch namespace.
      * @return a list of all groupIDs found in the database.
      * */
@@ -197,7 +204,7 @@ interface FetchDatabaseManager<T : DownloadInfo> : Closeable {
      * */
     fun deleteExtraByKey(id: Int, key: String): T?
 
-    fun deleteExtraByKey(ids: List<Int>, key: String):List<T?>
+    fun deleteExtraByKey(ids: List<Int>, key: String): List<T?>
 
     /**
      * Updates the priority on a downloads.

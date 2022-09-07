@@ -880,6 +880,16 @@ interface Fetch {
      * */
     fun getDownloadsByTag(tag: String, func: Func<List<Download>>): Fetch
 
+
+    /**
+     * Gets all downloads containing the tag.
+     * @param tags tags.
+     * @param func Callback that the results will be returned on.
+     * @throws FetchException if this instance of Fetch has been closed.
+     * @return Instance
+     * */
+    fun getDownloadsByTags(tags: List<String>, func: Func<List<Download>>): Fetch
+
     /**
      * Gets the FetchGroup by id. Even if the database does not contain downloads with this group id
      * a FetchGroup will be returned. It will contain no downloads however. When a download with this

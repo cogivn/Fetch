@@ -339,6 +339,15 @@ class FetchDatabaseManagerImpl constructor(
         return downloads
     }
 
+    override fun getDownloadsByTags(tags: List<String>): List<DownloadInfo> {
+        throwExceptionIfClosed()
+        val tagIds = tags.map { Tag.generateId(it) }
+        val tagsAndDownloads = requestDatabase.tagDao().getDownloadsByTags(tagIds)
+        val downloads = tagsAndDownloads.map { it.downloads }.flatten()
+        sanitize(downloads)
+        return downloads
+    }
+
     private fun executeInsertOrUpdateTag(info: DownloadInfo) {
         val tags: List<String> = when {
             info.tags.isNotEmpty() -> info.tags

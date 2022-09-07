@@ -140,6 +140,12 @@ class FetchDatabaseManagerWrapper(private val fetchDatabaseManager: FetchDatabas
         }
     }
 
+    override fun getDownloadsByTags(tags: List<String>): List<DownloadInfo> {
+        return synchronized(lock) {
+            fetchDatabaseManager.getDownloadsByTags(tags)
+        }
+    }
+
     override fun getDownloadsInGroupWithStatus(
         groupId: Int,
         statuses: List<Status>
