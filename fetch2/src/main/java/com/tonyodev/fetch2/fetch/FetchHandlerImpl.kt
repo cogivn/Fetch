@@ -332,7 +332,7 @@ class FetchHandlerImpl(
 
     private fun removeDownloads(downloads: List<DownloadInfo>): List<Download> {
         cancelDownloadsIfDownloading(downloads)
-        fetchDatabaseManagerWrapper.delete(downloads, true)
+        fetchDatabaseManagerWrapper.delete(downloads, false)
         downloads.forEach {
             it.status = Status.REMOVED
             fetchDatabaseManagerWrapper.delegate?.deleteTempFilesForDownload(it)
