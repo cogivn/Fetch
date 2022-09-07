@@ -15,7 +15,7 @@ abstract class TagDao {
     abstract fun getDownloadsByTag(tagId: Int): TagWithDownloads?
 
     @Transaction
-    @Query("SELECT * FROM $TABLE_TAG_NAME WHERE $COLUMN_TAG_ID IN (:tagIds)")
+    @Query("SELECT DISTINCT * FROM $TABLE_TAG_NAME WHERE $COLUMN_TAG_ID IN (:tagIds)")
     abstract fun getDownloadsByTags(tagIds: List<Int>):List<TagWithDownloads>
 
     @Insert(onConflict = IGNORE)
