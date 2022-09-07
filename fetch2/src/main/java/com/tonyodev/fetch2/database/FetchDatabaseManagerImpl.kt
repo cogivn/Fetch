@@ -343,7 +343,7 @@ class FetchDatabaseManagerImpl constructor(
         throwExceptionIfClosed()
         val tagIds = tags.map { Tag.generateId(it) }
         val tagsAndDownloads = requestDatabase.tagDao().getDownloadsByTags(tagIds)
-        val downloads = tagsAndDownloads.map { it.downloads }.flatten()
+        val downloads = tagsAndDownloads.map { it.downloads }.flatten().distinct()
         sanitize(downloads)
         return downloads
     }
