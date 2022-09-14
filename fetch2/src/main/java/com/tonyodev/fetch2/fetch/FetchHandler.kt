@@ -57,6 +57,11 @@ interface FetchHandler : Closeable {
     fun getAllGroupIds(): List<Int>
     fun getDownloadsByTag(tag: String): List<Download>
     fun getDownloadsByTags(tags: List<String>): List<Download>
+    suspend fun getDownloadsByGroupIdsAndStatuses(
+        groupsIds: List<Int>,
+        statuses: List<Status>
+    ): List<Download>
+
     fun getDownloadsWithStatus(statuses: List<Status>): List<Download>
     fun getDownloadsInGroupWithStatus(groupId: Int, statuses: List<Status>): List<Download>
     fun getDownloadsByRequestIdentifier(identifier: Long): List<Download>

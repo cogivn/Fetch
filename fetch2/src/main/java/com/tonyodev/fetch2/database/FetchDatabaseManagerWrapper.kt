@@ -146,6 +146,12 @@ class FetchDatabaseManagerWrapper(private val fetchDatabaseManager: FetchDatabas
         }
     }
 
+    override suspend fun getDownloadsByGroupIdsAndStatuses(
+        groupIds: List<Int>, statuses: List<Status>
+    ) = fetchDatabaseManager.getDownloadsByGroupIdsAndStatuses(
+        groupIds, statuses
+    )
+
     override fun getDownloadsInGroupWithStatus(
         groupId: Int,
         statuses: List<Status>

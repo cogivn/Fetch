@@ -611,6 +611,12 @@ class FetchHandlerImpl(
         return fetchDatabaseManagerWrapper.getDownloadsByTags(tags)
     }
 
+    override suspend fun getDownloadsByGroupIdsAndStatuses(
+        groupsIds: List<Int>, statuses: List<Status>
+    ) = fetchDatabaseManagerWrapper.getDownloadsByGroupIdsAndStatuses(
+        groupsIds, statuses
+    )
+
     override fun getDownloadBlocks(id: Int): List<DownloadBlock> {
         val download = fetchDatabaseManagerWrapper.get(id)
         return if (download != null) {

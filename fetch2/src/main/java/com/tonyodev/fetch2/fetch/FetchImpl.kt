@@ -1225,6 +1225,16 @@ open class FetchImpl constructor(
         }
     }
 
+    override suspend fun getRawDownloadsByGroupIdsAndStatuses(
+        groupIds: List<Int>,
+        statuses: List<Status>
+    ): List<Download> {
+        throwExceptionIfClosed()
+        return fetchHandler.getDownloadsByGroupIdsAndStatuses(
+            groupIds, statuses
+        )
+    }
+
     override fun addCompletedDownload(
         completedDownload: CompletedDownload,
         alertListeners: Boolean,

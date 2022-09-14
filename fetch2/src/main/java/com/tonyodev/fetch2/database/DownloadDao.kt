@@ -87,6 +87,11 @@ interface DownloadDao {
     fun getAllGroupIds(): List<Int>
 
     @Query("SELECT EXISTS(SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id)")
-    fun isRowIsExist(id : Int) : Boolean
+    fun isRowIsExist(id: Int): Boolean
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_GROUP in (:ids) AND $COLUMN_STATUS in (:statuses)")
+    fun getDownloadsByGroupIdsAndStatuses(
+        ids: List<Int>,
+        statuses: List<@JvmSuppressWildcards Status>
+    ): List<DownloadWithTags>
 }

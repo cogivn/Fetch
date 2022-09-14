@@ -169,6 +169,11 @@ interface FetchDatabaseManager<T : DownloadInfo> : Closeable {
      * */
     fun getDownloadsByTags(tags: List<String>): List<T>
 
+    suspend fun getDownloadsByGroupIdsAndStatuses(
+        groupIds: List<Int>,
+        statuses: List<Status>
+    ): List<T>
+
     /**
      * Gets a list of the ids of all groups managed my this fetch namespace.
      * @return a list of all groupIDs found in the database.

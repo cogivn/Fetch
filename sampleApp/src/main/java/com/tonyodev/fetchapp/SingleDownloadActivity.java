@@ -39,7 +39,7 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
 
     private View mainView;
     private TextView progressTextView;
-    private Button deleteButton;
+    private Button deleteButton, pausedButton, resumeButton;
     private TextView titleTextView;
     private TextView etaTextView;
     private TextView downloadSpeedTextView;
@@ -52,6 +52,8 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
         setContentView(R.layout.activity_single_download);
         mainView = findViewById(R.id.activity_single_download);
         deleteButton = findViewById(R.id.delete_key);
+        resumeButton = findViewById(R.id.resume);
+        pausedButton = findViewById(R.id.pause);
         progressTextView = findViewById(R.id.progressTextView);
         titleTextView = findViewById(R.id.titleTextView);
         etaTextView = findViewById(R.id.etaTextView);
@@ -64,12 +66,20 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
             ids.add(request.getId());
             fetch.deleteExtraByKey(ids, "testBoolean", null, null);
         });
+
+        resumeButton.setOnClickListener(v -> {
+            fetch.resume(request.getId());
+        });
+
+        pausedButton.setOnClickListener(v -> {
+            fetch.pause(request.getId());
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (request != null) {
+        if (request != null && !fetch.isClosed()) {
             fetch.attachFetchObserversForDownload(request.getId(), this);
         }
     }
@@ -77,7 +87,7 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
     @Override
     protected void onPause() {
         super.onPause();
-        if (request != null) {
+        if (request != null && !fetch.isClosed()) {
             fetch.removeFetchObserversForDownload(request.getId(), this);
         }
     }
@@ -147,7 +157,7 @@ public class SingleDownloadActivity extends AppCompatActivity implements FetchOb
             etaTextView.setText(Utils.getETAString(this, download.getEtaInMilliSeconds()));
             downloadSpeedTextView.setText(Utils.getDownloadSpeedString(this, download.getDownloadedBytesPerSecond()));
             if (download.getError() != Error.NONE) {
-                showDownloadErrorSnackBar(download.getError());
+                // showDownloadErrorSnackBar(download.getError());
             }
 
             if (download.getStatus() == Status.COMPLETED) {

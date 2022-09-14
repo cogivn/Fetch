@@ -33,8 +33,8 @@ public class App extends Application {
                 .enableRetryOnNetworkGain(true)
                 .setDownloadConcurrentLimit(3)
                 .enableLogging(true)
-                //.setHttpDownloader(new OkHttpDownloader(getUnsafeOkHttpClient(), Downloader.FileDownloaderType.PARALLEL))
-                .setHttpDownloader(new HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setHttpDownloader(new OkHttpDownloader(getUnsafeOkHttpClient(), Downloader.FileDownloaderType.SEQUENTIAL))
+                //.setHttpDownloader(new HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
                 // OR
                 //.setHttpDownloader(getOkHttpDownloader())
                 .build();

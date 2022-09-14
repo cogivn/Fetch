@@ -16,7 +16,7 @@ import java.util.List;
 public final class Data {
 
     public static final String[] sampleUrls = new String[]{
-            "http://dummy.restapiexample.com/api/v1/create",
+            "https://uatcia.contechpoint.com/cia-api/project/GetSitePhotoImage?token=2CA2B114-7D5F-47A1-9DA5-A179155A9150_53607_-1_0_0&guid=aa448624-3376-4d07-bf3d-2b4dd3c69443&lg=1&offline=1",
             "http://speedtest.ftp.otenet.gr/files/test100Mb.db",
             "https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_stereo.avi",
             "http://media.mongodb.org/zips.json",

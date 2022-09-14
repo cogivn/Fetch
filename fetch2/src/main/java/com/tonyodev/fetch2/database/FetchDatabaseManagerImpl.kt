@@ -348,6 +348,19 @@ class FetchDatabaseManagerImpl constructor(
         return downloads
     }
 
+    override suspend fun getDownloadsByGroupIdsAndStatuses(
+        groupIds: List<Int>,
+        statuses: List<Status>
+    ): List<DownloadInfo> {
+        val downloadsWithTags = requestDatabase.requestDao()
+            .getDownloadsByGroupIdsAndStatuses(groupIds, statuses)
+        val downloads = downloadsWithTags.map {
+            it.download.apply { tags = it.tags.map { tag -> tag.title } }
+        }
+        sanitize(downloads)
+        return downloads
+    }
+
     private fun executeInsertOrUpdateTag(info: DownloadInfo) {
         val tags: List<String> = when {
             info.tags.isNotEmpty() -> info.tags
