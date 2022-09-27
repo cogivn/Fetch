@@ -740,6 +740,7 @@ interface Fetch {
         func2: Func<Error>? = null
     ): Fetch
 
+    
     /**
      * Resets the autoRetryAttempts value for a download back to 0.
      * @param downloadId Id of existing request/download
