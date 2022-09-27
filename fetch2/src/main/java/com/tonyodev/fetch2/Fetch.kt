@@ -159,11 +159,12 @@ interface Fetch {
 
     /**
      * Pause all downloads associated by this fetch.
-     *
+     * @param isNotify return True if you want to fetch notify to target. False otherwise
+     * @param func callback returning when update process is done.
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun pauseAll(): Fetch
+    fun pauseAll(isNotify: Boolean = true, func: Func<Unit>? = null): Fetch
 
     /** Pauses all currently downloading items, and pauses all download processing fetch operations.
      *  Use this method when you do not want Fetch to keep processing downloads

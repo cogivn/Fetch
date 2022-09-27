@@ -248,16 +248,19 @@ open class FetchImpl constructor(
         return pauseGroup(id, null, null)
     }
 
-    override fun pauseAll(): Fetch {
+    override fun pauseAll(isNotify: Boolean, func: Func<Unit>?): Fetch {
         synchronized(lock) {
             throwExceptionIfClosed()
             handlerWrapper.post {
                 try {
                     val downloads = fetchHandler.pauseAll()
-                    downloads.forEach {
-                        logger.d("Paused download $it")
-                        listenerCoordinator.mainListener.onPaused(it)
+                    if (isNotify) {
+                        downloads.forEach {
+                            logger.d("Paused download $it")
+                            listenerCoordinator.mainListener.onPaused(it)
+                        }
                     }
+                    func?.call(Unit)
                 } catch (e: Exception) {
                     logger.e("Fetch with namespace $namespace error", e)
                     val error = getErrorFromMessage(e.message)
