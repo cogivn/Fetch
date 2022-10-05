@@ -94,8 +94,12 @@ open class FetchImpl constructor(
         return this
     }
 
-    override fun enqueue(requests: List<Request>, func: Func<List<Pair<Request, Error>>>?): Fetch {
-        enqueueRequest(requests, func, null)
+    override fun enqueue(
+        requests: List<Request>,
+        func: Func<List<Pair<Request, Error>>>?,
+        isNotify: Boolean
+    ): Fetch {
+        enqueueRequest(requests, func, null, isNotify = isNotify)
         return this
     }
 
@@ -123,7 +127,8 @@ open class FetchImpl constructor(
     private fun enqueueRequest(
         requests: List<Request>,
         func: Func<List<Pair<Request, Error>>>?,
-        func2: Func<Error>?
+        func2: Func<Error>?,
+        isNotify: Boolean = true
     ) {
         synchronized(lock) {
             throwExceptionIfClosed()
@@ -134,31 +139,34 @@ open class FetchImpl constructor(
                         throw FetchException(ENQUEUED_REQUESTS_ARE_NOT_DISTINCT)
                     }
                     val downloadPairs = fetchHandler.enqueue(requests)
-                    downloadPairs.forEach { downloadPair ->
-                        val download = downloadPair.first
-                        when (download.status) {
-                            Status.ADDED -> {
-                                listenerCoordinator.mainListener.onAdded(download)
-                                logger.d("Added $download")
-                            }
-                            Status.QUEUED -> {
-                                val downloadCopy =
-                                    download.toDownloadInfo(fetchDatabaseManagerWrapper.getNewDownloadInfoInstance())
-                                downloadCopy.status = Status.ADDED
-                                listenerCoordinator.mainListener.onAdded(downloadCopy)
-                                logger.d("Added $download")
-                                listenerCoordinator.mainListener.onQueued(download, false)
-                                logger.d("Queued $download for download")
-                            }
-                            Status.COMPLETED -> {
-                                listenerCoordinator.mainListener.onCompleted(download)
-                                logger.d("Completed download $download")
-                            }
-                            else -> {
+                    if (isNotify) {
+                        downloadPairs.forEach { downloadPair ->
+                            val download = downloadPair.first
+                            when (download.status) {
+                                Status.ADDED -> {
+                                    listenerCoordinator.mainListener.onAdded(download)
+                                    logger.d("Added $download")
+                                }
+                                Status.QUEUED -> {
+                                    val downloadCopy =
+                                        download.toDownloadInfo(fetchDatabaseManagerWrapper.getNewDownloadInfoInstance())
+                                    downloadCopy.status = Status.ADDED
+                                    listenerCoordinator.mainListener.onAdded(downloadCopy)
+                                    logger.d("Added $download")
+                                    listenerCoordinator.mainListener.onQueued(download, false)
+                                    logger.d("Queued $download for download")
+                                }
+                                Status.COMPLETED -> {
+                                    listenerCoordinator.mainListener.onCompleted(download)
+                                    logger.d("Completed download $download")
+                                }
+                                else -> {
 
+                                }
                             }
                         }
                     }
+
                     uiHandler.post {
                         func?.call(downloadPairs.map { Pair(it.first.request, it.second) })
                     }

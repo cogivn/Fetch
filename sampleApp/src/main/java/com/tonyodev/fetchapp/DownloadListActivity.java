@@ -178,7 +178,7 @@ public class DownloadListActivity extends AppCompatActivity implements ActionLis
         final List<Request> requests = Data.getFetchRequestWithGroupId(GROUP_ID, this);
         fetch.enqueue(requests, updatedRequests -> {
 
-        });
+        }, true);
 
     }
 

@@ -69,11 +69,16 @@ interface Fetch {
      *             that the request was not enqueued for the specified reason.
      *             Fetch may update a request depending on the initial request's Enqueue Action.
      *             Update old request references with this request.
+     * @param isNotify return True if you want to fetch notify to target. False otherwise
      *
      * @throws FetchException if this instance of Fetch has been closed.
      * @return Instance
      * */
-    fun enqueue(requests: List<Request>, func: Func<List<Pair<Request, Error>>>? = null): Fetch
+    fun enqueue(
+        requests: List<Request>,
+        func: Func<List<Pair<Request, Error>>>? = null,
+        isNotify: Boolean = true
+    ): Fetch
 
 
     /**
@@ -740,7 +745,7 @@ interface Fetch {
         func2: Func<Error>? = null
     ): Fetch
 
-    
+
     /**
      * Resets the autoRetryAttempts value for a download back to 0.
      * @param downloadId Id of existing request/download
