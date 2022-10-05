@@ -133,6 +133,7 @@ interface Fetch {
     fun pause(id: Int): Fetch
 
     /**
+     * 
      * Pause all queued or downloading downloads within the specified group.
      * @param id specified group id.
      * @param func callback that returns list of downloads that were paused in the group.
